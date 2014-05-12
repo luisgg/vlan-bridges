@@ -54,7 +54,7 @@ case "$MODE" in
 		[ "$PHASE" != "pre-down" ] || $VLAN_BRIDGES_CMD down || true
 		;;
 	*)
-		echo "unknown mode: \"$MODE\"" > &2
+		echo "unknown mode: \"$MODE\"" >&2
 		exit 1
 		;;
 esac
