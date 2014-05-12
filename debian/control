@@ -1,0 +1,49 @@
+Source: vlan-bridges
+Section: admin
+Priority: optional
+Maintainer: Luis Antonio Garcia Gisbert <luisgg@gmail.com>
+Build-Depends: debhelper (>= 7.0), gettext
+Standards-Version: 3.9.3
+
+Package: vlan-bridges
+Architecture: all
+Depends: ${misc:Depends}, bridge-utils, vlan
+Description: Create bridges associated to VLANs
+ The provided script creates bridges associated to a unique VLAN tag
+ over an ethernet interface (it may be a simple interface or a bound of
+ multiples interfaces) or a bridge over an interface (either simple or
+ bound interface).
+ The script can be run directly from commandline or by ifupdown during
+ network interface configuration.
+ The intended use is to facilitate the creation of virtual machines
+ with network interfaces bridged to specific VLANs tags.
+
+Package: ausias-vlan-data
+Architecture: all
+Depends: ${misc:Depends}
+Recommends: vlan-bridges
+Description: CIPFP Ausias March VLANs configuration
+ Provides the configuration of the CIPFP Ausias March intranet VLANs.
+ The package installs a configuration file ready to use by vlan-bridges package
+
+Package: ausias-medusa-vlan-settings
+Architecture: all
+Depends: ${misc:Depends}, vlan-bridges, ausias-vlan-data
+Description: Medusa server VLAN configuration
+ The package configures VLANs bridges for 'Medusa' server in CIPFP Ausias March 
+ intranet environment using vlan-bridges script.
+
+Package: ausias-bruna-vlan-settings
+Architecture: all
+Depends: ${misc:Depends}, vlan-bridges, ausias-vlan-data
+Description: Bruna server VLAN configuration
+ The package configures VLANs bridges for 'Bruna' server in CIPFP Ausias March 
+ intranet environment using vlan-bridges script.
+
+Package: ausias-ender-vlan-settings
+Architecture: all
+Depends: ${misc:Depends}, vlan-bridges, ausias-vlan-data
+Description: Ender server VLAN configuration
+ The package configures VLANs bridges for 'Ender' server in CIPFP Ausias March 
+ intranet environment using vlan-bridges script.
+

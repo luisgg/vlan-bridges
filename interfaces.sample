@@ -1,0 +1,133 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# macrolan
+auto eth0
+iface eth0 inet manual
+
+auto br-eth0
+iface br-eth0 inet manual
+    bridge_ports eth0
+    bridge_stp off
+
+# macrolan-fp
+auto eth1
+iface eth1 inet manual
+
+auto br-eth1
+iface br-eth1 inet manual
+    bridge_ports eth1
+    bridge_stp off
+
+# ADSL
+auto eth2
+iface eth2 inet manual
+
+auto br-eth2
+iface br-eth2 inet manual
+    bridge_ports eth2
+    bridge_stp off
+
+
+# configure slave interfaces for bond0
+auto eth4
+iface eth4 inet manual
+    bond-master bond0
+
+auto eth3
+iface eth3 inet manual
+    bond-master bond0
+
+# configure bond0
+
+auto bond0
+iface bond0 inet manual
+    bond-slaves none
+#    bond-mode 802.3ad
+    bond-mode 5
+    bond-miimon 100
+
+# bridge over bond0
+auto br0
+iface br0 inet static
+   address 192.168.200.69
+   netmask 255.255.255.0
+   bridge_ports bond0
+   bridge_stp off
+   pre-up /sbin/ifconfig bond0 up || /bin/true 
+   post-up /usr/sbin/vlan-bridges br0 up || /bin/true
+   pre-down /usr/sbin/vlan-bridges br0 down || /bin/true
+   dns-nameservers 192.168.200.1
+   dns-search lan
+
+
+# NEW vlan stuff
+#auto br0.1010
+#iface br0.1010 inet manual
+#     vlan-raw-device br0
+##    post-up ip link set br0.1010 address 00:00:00:10:10:00 || /bin/true
+
+#auto br1010
+#iface br1010 inet manual
+#    bridge_ports br0.1010
+#    bridge_stp off
+##    pre-up /sbin/ifconfig br0.1010 up || /bin/true 
+##    post-up ip link set br1010 address 00:00:00:10:10:00 || /bin/true
+
+#auto br0.322
+#iface br0.322 inet manual
+#     vlan-raw-device br0
+
+#auto br322
+#iface br322 inet manual
+#    bridge_ports br0.322
+#    bridge_stp off
+
+#auto br0.320
+#iface br0.320 inet manual
+#     vlan-raw-device br0
+
+#auto br320
+#iface br320 inet manual
+#    bridge_ports br0.320
+#    bridge_stp off
+
+
+
+
+# vlans bridges
+
+## br1010, just a sample for vlan 1010 (reprolan)
+#auto br1010
+#iface br1010 inet manual
+#    bridge_ports bond0.1010
+#    bridge_stp off
+
+## br322, vlan 322 ('new' DMZ, coming soon to an switch near you ;-) )
+#auto br308
+#iface br308 inet manual
+#    bridge_ports bond0.308
+#    bridge_stp off
+##    address 10.3.8.9
+##    netmask 255.255.255.0
+##    gateway 10.3.8.1
+
+## br320, vlan 320 (srv_lan)
+#auto br320
+#iface br320 inet manual
+#    bridge_ports bond0.320
+#    bridge_stp off
+##auto br313
+##iface br313 inet manual
+##    bridge_ports bond0.313
+##    bridge_stp off
+
+##auto br-305
+##iface br-305 inet manual
+##    bridge_ports eth2.305
+##    bridge_stp off
+

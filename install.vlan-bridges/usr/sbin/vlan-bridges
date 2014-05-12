@@ -1,0 +1,120 @@
+#!/bin/sh
+# -------
+# File:        vlan-bridges
+# Description: Create bridges associated to vlans
+#              The intended use is to invoke the script from the post-up and pre-down commands in
+#              /etc/network/interfaces or from scripts in if-up.d and if-down.d directories
+#              (see vlan-bridges-br0 sample script provided)
+#
+# Author:      Luis Antonio Garcia Gisbert <luisgg@gmail.com> 
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along 
+# with this program; if not, write to the Free Software Foundation, Inc., 
+# 51 Franklin St, Fifth Floor, Boston MA 02110-1301 USA
+# --------
+
+# vars
+# ----
+
+# The scripts sources all files in "/etc/vlan-bridges/common.d" and "/etc/vlan-bridges/${IFACE}.d"
+# directories in that order.
+# Files in to these directories are processed in alphabetical order.
+# 
+# You can use the configuration files to populate these variables:
+
+#	VLAN_LIST, VLANS_EXTRA	: space separated lists with tags of the required VLANS. Both variables are used. 
+#	VLAN_IP_LIST 		: space separated list to assign IPs to any of the VLAN bridges. Each item is in the form: VLAN/IP/MASK
+#	DEFAULT_ROUTE		: set this variable if the default gw interface is one of the VLAN bridges
+
+# funcs
+# ----
+usage() {
+	echo "Usage: $(basename "$0") IFACE {up|down}"
+	exit 1
+}
+
+test_iface(){
+	ifconfig -a | sed -ne "/^[[:alnum:]]/{s%[[:blank:]].*$%%;p}" |grep -qFx "$1" || return 1
+	return 0
+}
+
+do_start() {
+	modprobe 8021q >/dev/null || true
+	for VLAN in $VLAN_LIST $VLANS_EXTRA ; do
+		vconfig add $BASE_IFACE $VLAN || true
+		ifconfig ${BASE_IFACE}.${VLAN} up || true
+		BR_NAME="br${VLAN}"
+		brctl addbr $BR_NAME || true
+		brctl addif $BR_NAME ${BASE_IFACE}.${VLAN} || true
+		ifconfig $BR_NAME up || true
+	done
+	for p in $VLAN_IP_LIST ; do
+		VLAN="${p%%/*}"
+		BR_NAME="br${VLAN}"
+		ADDRESS_MASK="${p#*/}"
+		BR_IP="${ADDRESS_MASK%/*}"
+		BR_MASK="${ADDRESS_MASK#*/}"
+		ifconfig "$BR_NAME" "$BR_IP" netmask "$BR_MASK"
+	done
+	[ -z "$DEFAULT_ROUTE" ] || route add default gw "$DEFAULT_ROUTE" || true
+	return 0
+}
+
+do_stop() {
+	for VLAN in $VLAN_LIST ; do
+		BR_NAME="br${VLAN}"
+		brctl delif $BR_NAME ${BASE_IFACE}.${VLAN} || true
+		ifconfig $BR_NAME down || true
+		brctl delbr $BR_NAME || true
+		vconfig rem ${BASE_IFACE}.${VLAN} || true
+	done
+	[ -z "$DEFAULT_ROUTE" ] || route del default || true
+	return 0
+}
+
+# main
+# ----
+
+[ "$1" ] || usage
+BASE_IFACE="$1"
+test_iface "$BASE_IFACE" || usage
+shift
+
+# read config
+CONF_BASEDIR="/etc/vlan-bridges"
+#CONF_DIR="$CONF_BASEDIR/conf.d"
+#CONF_FILE="$CONF_BASEDIR/${BASE_IFACE}.conf"
+
+for CONF_DIR in "$CONF_BASEDIR/common.d" "$CONF_BASEDIR/${BASE_IFACE}.d" ; do
+	if [ -d "$CONF_DIR" ] ; then
+		for f in $(ls -1 "$CONF_DIR" |sort) ; do
+			if [ -f  "$CONF_DIR/$f" ] ; then
+				. $CONF_DIR/$f
+			fi
+		done
+	fi
+done
+
+rc=0
+case "$1" in
+	up|start)
+		do_start || rc=$?
+		;;
+	down|stop)
+		do_stop || rc=$?
+		;;
+	*)
+		usage
+		;;
+esac
+exit $rc

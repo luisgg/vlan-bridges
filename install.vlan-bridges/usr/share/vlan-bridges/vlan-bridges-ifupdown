@@ -1,0 +1,62 @@
+#!/bin/sh
+# -------
+# File:        vlan-bridges-ifupdown
+# Description: This file is intended to be executed by ifupdown to invoke vlan-bridges.
+#              You can use it directly by linking or copying the script to /etc/network/if-up.d and /etc/network/if-down.d
+#              vlan interface name can be explicitly set in the variable VLAN_IFACE.i
+#              If this variable is empty, the script try to guess interface name from script name (if name contais a colon ':').
+#              In this case, the part after (the first) colon ':' is treated as the interface name.
+# Author:      Luis Antonio Garcia Gisbert <luisgg@gmail.com> 
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along 
+# with this program; if not, write to the Free Software Foundation, Inc., 
+# 51 Franklin St, Fifth Floor, Boston MA 02110-1301 USA
+# --------
+
+# vars
+# ----
+
+# force an interface name
+
+#VLAN_IFACE="br0"
+
+# or guess interface name from script name
+if [ -z "$VLAN_IFACE" ] ; then
+	BASE_NAME="$(basename "$0")"
+	GUESS_IFACE="${BASE_NAME#*:}"
+	if [ "$GUESS_IFACE" ] && [ "$GUESS_IFACE" != "$BASE_NAME" ] ; then
+		VLAN_IFACE="$GUESS_IFACE"
+	fi
+fi
+
+# test name of the interface being processed
+if [ -z "$IFACE" ] || [ -z "$VLAN_IFACE" ] || [ "$IFACE" != "$VLAN_IFACE" ] ; then
+	exit 0
+fi
+
+VLAN_BRIDGES_CMD="/usr/sbin/vlan-bridges $VLAN_IFACE"
+
+case "$MODE" in 
+	start)
+		[ "$PHASE" != "post-up" ] || $VLAN_BRIDGES_CMD up || true
+		;;
+	stop)
+		[ "$PHASE" != "pre-down" ] || $VLAN_BRIDGES_CMD down || true
+		;;
+	*)
+		echo "unknown mode: \"$MODE\"" > &2
+		exit 1
+		;;
+esac
+
+exit 0

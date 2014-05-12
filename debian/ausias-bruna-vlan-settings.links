@@ -1,0 +1,3 @@
+/usr/share/ausias-bruna-vlan-settings/bruna-vlan.conf /etc/vlan-bridges/br1/bruna-vlan.conf
+/usr/share/vlan-bridges/vlan-bridges-ifupdown /etc/network/if-up.d/vlan-bridges:br1
+/usr/share/vlan-bridges/vlan-bridges-ifupdown /etc/network/if-down.d/vlan-bridges:br1
