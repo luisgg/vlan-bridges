@@ -36,6 +36,7 @@ Description: Medusa server VLAN configuration
 Package: ausias-bruna-vlan-settings
 Architecture: all
 Depends: ${misc:Depends}, vlan-bridges, ausias-vlan-data
+Conflicts: ausias-ender-vlan-settings
 Description: Bruna server VLAN configuration
  The package configures VLANs bridges for 'Bruna' server in CIPFP Ausias March 
  intranet environment using vlan-bridges script.
@@ -43,6 +44,7 @@ Description: Bruna server VLAN configuration
 Package: ausias-ender-vlan-settings
 Architecture: all
 Depends: ${misc:Depends}, vlan-bridges, ausias-vlan-data
+Conflicts: ausias-bruna-vlan-settings
 Description: Ender server VLAN configuration
  The package configures VLANs bridges for 'Ender' server in CIPFP Ausias March 
  intranet environment using vlan-bridges script.
