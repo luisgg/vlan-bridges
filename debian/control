@@ -7,7 +7,7 @@ Standards-Version: 3.9.3
 
 Package: vlan-bridges
 Architecture: all
-Depends: ${misc:Depends}, bridge-utils, vlan
+Depends: ${misc:Depends}, bridge-utils, vlan, ifenslave | ifenslave-2.6
 Description: Create bridges associated to VLANs
  The provided script creates bridges associated to a unique VLAN tag
  over an ethernet interface (it may be a simple interface or a bound of

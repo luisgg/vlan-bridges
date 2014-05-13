@@ -1,3 +1,9 @@
+vlan-bridges (0.2) precise; urgency=low
+
+  * Fixed directory name in 'bruna' and 'ender' configuration file
+
+ -- Luis Antonio Garcia Gisbert <luisgg@gmail.com>  Wed, 14 May 2014 00:15:26 +0200
+
 vlan-bridges (0.1) precise; urgency=low
 
   * Initial release.

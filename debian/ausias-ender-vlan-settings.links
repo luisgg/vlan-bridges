@@ -1,3 +1,1 @@
-/usr/share/ausias-ender-vlan-settings/ender-vlan.conf	/etc/vlan-bridges/br1/ender-vlan.conf
-/usr/share/vlan-bridges/vlan-bridges-ifupdown 		/etc/network/if-up.d/vlan-bridges:br1
-/usr/share/vlan-bridges/vlan-bridges-ifupdown 		/etc/network/if-down.d/vlan-bridges:br1
+/usr/share/ausias-ender-vlan-settings/ender-vlan.conf	/etc/vlan-bridges/br1.d/ender-vlan.conf
