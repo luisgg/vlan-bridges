@@ -8,4 +8,4 @@ start on starting libvirt-bin
 
 task
 
-exec /usr/sbin/virsh-bridges start
+exec /usr/sbin/vlan-bridges br0 up
