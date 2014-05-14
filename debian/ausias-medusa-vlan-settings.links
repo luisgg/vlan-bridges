@@ -1,3 +1,1 @@
-/usr/share/ausias-medusa-vlan-settings/medusa-vlan.conf /etc/vlan-bridges/br0/medusa-vlan.conf
-/usr/share/vlan-bridges/vlan-bridges-ifupdown /etc/network/if-up.d/vlan-bridges:br0
-/usr/share/vlan-bridges/vlan-bridges-ifupdown /etc/network/if-down.d/vlan-bridges:br0
+/usr/share/ausias-medusa-vlan-settings/medusa-vlan.conf /etc/vlan-bridges/br0.d/medusa-vlan.conf

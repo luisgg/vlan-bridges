@@ -1,3 +1,9 @@
+vlan-bridges (0.3) precise; urgency=low
+
+  * Added some verbosity to vlan-bridges to get feedback about IP address configuration
+
+ -- Luis Antonio Garcia Gisbert <luisgg@gmail.com>  Wed, 14 May 2014 08:09:29 +0200
+
 vlan-bridges (0.2) precise; urgency=low
 
   * Fixed directory name in 'bruna' and 'ender' configuration file

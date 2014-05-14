@@ -64,7 +64,7 @@ do_start() {
 		ADDRESS_MASK="${p#*/}"
 		BR_IP="${ADDRESS_MASK%/*}"
 		BR_MASK="${ADDRESS_MASK#*/}"
-		ifconfig "$BR_NAME" "$BR_IP" netmask "$BR_MASK"
+		ifconfig "$BR_NAME" "$BR_IP" netmask "$BR_MASK" && echo "$BR_NAME -> $BR_IP/$BR_MASK" || true
 	done
 	[ -z "$DEFAULT_ROUTE" ] || route add default gw "$DEFAULT_ROUTE" || true
 	return 0
